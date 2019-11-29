@@ -1,0 +1,61 @@
+.dy_pro_list{
+    overflow: hidden;
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #f8f8f8;
+    .dy_film_photo{
+        float: left;
+        border-radius: 4px;
+        margin-right: 10px;
+        width: 65px;
+        height: 90px;
+    }
+    .dy_title{
+        display: flex;
+        white-space: nowrap;
+        line-height: 1;
+        width: 10rem;
+        .dy_show_name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-right: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .dy_vd{
+            background: #108ee9;
+            color: #fff;
+            font-size: 12px;
+            padding: 0 2px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+        }
+        
+    }
+    .dy_brief{
+        color: #777;
+        margin-top: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .dy_mark{
+        color: #FB623A;
+    }
+    .dy_content{
+        flex: 1;
+        max-width: 196px;
+    }
+    .dy_btn_wrap{
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        color: #fff;
+        margin-left: 10px;
+        a{
+            background: #ff6969;
+            border-color: #ff6969;
+        }
+    }
+}

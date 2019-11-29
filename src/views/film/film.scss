@@ -1,0 +1,94 @@
+#film{
+    .fixed_top{
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        padding: 10px 0;
+    }
+    .city_selected{
+        float: left;
+        margin: 13px 24px 0 0;
+        font-size: 14px;
+        position: relative;
+    }
+    .search_bar{
+        margin-bottom: 5px;
+    }
+    .am-search-input{
+        background: #efeff4;
+    }
+    .am-search{
+        border-radius: 20px;
+        height: 36px;
+    }
+    .arrow_down{
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #333;
+        position: absolute;
+        right: -11px;
+        top: 5px;
+    }
+    .tabs-bar{
+        height: 40px;
+        text-align: center;
+        display: flex;
+        padding: 0 20%;
+        span{
+            display: block;
+            flex: 1;
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
+            position: relative;
+        }
+        .active{
+            font-weight: 700;
+            &:after{
+                content: '';
+                width: 20px;
+                height: 3px;
+                background: #108ee9;
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                transform: translateX(-50%);
+                border-radius: 20%;
+            }
+        }
+    }
+    .pd_top{
+        padding-top: 104px;
+    }
+    .address_list{
+        padding: 10px 0;
+        border-bottom: 1px solid #f8f8f8;
+        .name_bar{
+            margin-bottom: 6px;
+        }
+        .name_bar,.address_bar{
+            display: flex;
+            align-items: center;
+        }
+        .show_cinema{
+            font-size: 16px;
+            font-weight: 500;
+            flex: 1;
+        }
+        .show_price{
+            flex: 0 auto;
+            color: #ff6969;
+        }
+        .show_address{
+            color: #777;
+            flex: 1;
+        }
+        .dis{
+            flex: 0 auto;
+            color: #777;
+        }
+    }
+}
