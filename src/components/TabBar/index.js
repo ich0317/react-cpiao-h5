@@ -1,15 +1,16 @@
 import React, { Component }from 'react'
 import { TabBar, WingBlank } from 'antd-mobile';
+
 import "./index.scss";
 class TabBarWrap extends Component {
-    constructor(props){
-        super(props);
+    constructor(props, context){
+        super(props, context);
         this.state = {
             selectedTab: 'film',
             hidden: false,
             fullScreen: false
         }
-        console.log(props);
+        
     }
     render(){
         return (<div className="top_scroll"><TabBar
@@ -66,7 +67,7 @@ class TabBarWrap extends Component {
                   }}
                   data-seed="logId"
               >
-                 
+                 {this.props.find}
               </TabBar.Item>
               <TabBar.Item
                   title="我的"

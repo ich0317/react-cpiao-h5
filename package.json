@@ -45,11 +45,12 @@
     "postcss-normalize": "7.0.1",
     "postcss-preset-env": "6.7.0",
     "postcss-safe-parser": "4.0.1",
-    "react": "^16.11.0",
+    "react": "^16.4.1",
     "react-app-polyfill": "^1.0.4",
     "react-dev-utils": "^9.1.0",
-    "react-dom": "^16.11.0",
+    "react-dom": "^16.4.1",
     "react-router-dom": "^5.1.2",
+    "react-transition-group": "^4.3.0",
     "resolve": "1.12.0",
     "resolve-url-loader": "3.1.0",
     "sass-loader": "7.2.0",
@@ -88,6 +89,7 @@
     "axios": "^0.19.0",
     "node-sass": "^4.13.0",
     "postcss-px2rem-exclude": "^0.0.6",
+    "react-sticky": "^6.0.3",
     "svg-sprite-loader": "^4.1.6"
   },
   "jest": {

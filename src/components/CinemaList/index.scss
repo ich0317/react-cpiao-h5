@@ -1,0 +1,28 @@
+.address_list{
+    padding: 10px 0;
+    border-bottom: 1px solid #f8f8f8;
+    .name_bar{
+        margin-bottom: 6px;
+    }
+    .name_bar,.address_bar{
+        display: flex;
+        align-items: center;
+    }
+    .show_cinema{
+        font-size: 16px;
+        font-weight: 500;
+        flex: 1;
+    }
+    .show_price{
+        flex: 0 auto;
+        color: #ff6969;
+    }
+    .show_address{
+        color: #777;
+        flex: 1;
+    }
+    .dis{
+        flex: 0 auto;
+        color: #777;
+    }
+}

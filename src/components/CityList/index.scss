@@ -1,0 +1,36 @@
+.am-list-item .am-list-line .am-list-content{
+    font-size: 14px;
+}
+.am-list-item{
+    padding: 0;
+    text-indent: 15px;
+}
+.am-list-item .am-list-line{
+ padding: 0;
+}
+.am-indexed-list-quick-search-bar{
+    font-size: 14px;
+}
+.area{
+    margin-bottom: 10px;
+}
+.area dt{
+    margin-bottom: 10px;
+}
+.now_location{
+    background: #fff;
+    display: inline-block;
+    padding: 7px 20px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    line-height: 1;
+    color: #333;
+    align-self: stretch;
+}
+.am-search-input,.am-search-input .am-search-synthetic-ph,.am-search-input input[type="search"]{
+    height: 32px;
+}
+.am-search-synthetic-ph-container{
+    position: relative;
+    top: 2px;
+}

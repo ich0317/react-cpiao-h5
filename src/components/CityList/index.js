@@ -2,7 +2,7 @@ import React from 'react'
 import { province } from 'antd-mobile-demo-data';
 import { StickyContainer, Sticky } from 'react-sticky';
 import { ListView, List, SearchBar } from 'antd-mobile';
-
+import './index.scss'
 const { Item } = List;
 
 function genData(ds, provinceData) {
@@ -22,7 +22,7 @@ function genData(ds, provinceData) {
   return ds.cloneWithRowsAndSections(dataBlob, sectionIDs, rowIDs);
 }
 
-export class Demo extends React.Component {
+class City extends React.Component {
   constructor(props) {
     super(props);
     const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
@@ -44,7 +44,6 @@ export class Demo extends React.Component {
 
   componentDidMount() {
     // simulate initial Ajax
-    
     setTimeout(() => {
       this.setState({
         dataSource: genData(this.state.dataSource, province),
@@ -70,11 +69,11 @@ export class Demo extends React.Component {
   }
 
   render() {
-    return (<div style={{ paddingTop: '44px', position: 'relative' }}>
+    return (<div style={{ paddingTop: '40px', position: 'relative', background:'#f5f5f9' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
         <SearchBar
           value={this.state.inputValue}
-          placeholder="Search"
+          placeholder="输入城市名"
           onChange={this.onSearch}
           onClear={() => { console.log('onClear'); }}
           onCancel={() => { console.log('onCancel'); }}
@@ -101,16 +100,16 @@ export class Demo extends React.Component {
                 style={{
                   ...style,
                   zIndex: 3,
-                  backgroundColor: sectionData.charCodeAt(0) % 2 ? '#5890ff' : '#F8591A',
-                  color: 'white',
+                  background:'#f5f5f9',
+                  height:'25px',
+                  'lineHeight':'25px'
                 }}
               >{sectionData}</div>
             )}
           </Sticky>
         )}
-        renderHeader={() => <span>custom header</span>}
-        renderFooter={() => <span>custom footer</span>}
         renderRow={rowData => (<Item>{rowData}</Item>)}
+        renderHeader={() => <dl className="area"><dt>你所在的地区</dt><dd><span className="now_location">北京</span></dd></dl>}
         quickSearchBarStyle={{
           top: 85,
         }}
@@ -120,3 +119,5 @@ export class Demo extends React.Component {
     </div>);
   }
 }
+
+export default City
