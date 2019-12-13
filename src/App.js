@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Routes from './router/router'
 import './App.scss'
 
-console.log(window.screen)
+console.log(window.navigator.userAgent.indexOf('iPhone'),window.screen)
 
 class App extends Component {
   render(){

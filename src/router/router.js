@@ -7,6 +7,7 @@ import FindDetail from '@/views/find/detail/detail.js'
 import Cinema from '@/views/cinema/cinema.js'
 import Film from '@/views/film/film.js'
 import Seat from '@/views/seat/seat.js'
+import OrderDetail from '@/views/order/detail/detail.js'
 
 function Routes(){
     return (
@@ -19,6 +20,7 @@ function Routes(){
               <Route path="/cinema" component={Cinema} />
               <Route path="/film" component={Film} />
               <Route path="/seat" component={Seat} />
+              <Route path="/order/detail" component={OrderDetail} />
             </Switch>
       </BrowserRouter>
     )
