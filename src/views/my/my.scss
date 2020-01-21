@@ -1,0 +1,47 @@
+.my{
+    .my_bg{
+        background-color: #ff6969;
+        height: 100px;
+        border-radius: 0 0 30px 30px;
+    }
+    .persional{
+        padding: 15px 0 0 20px;
+        display: flex;
+        align-items: center;
+        dt {
+            float: left;
+            margin-right: 10px;
+        }
+        dd{
+            color: #fff;
+            font-size: 18px;
+        }
+    }
+    .cloumn{
+        padding: 0 15px;
+        margin-top: -20px;
+    }
+    .persional_item{
+        background: #fff;
+        border-radius: 8px 8px 0 0;
+        border: 1px solid #f5f5f5;
+        li{
+            border-bottom: 1px solid #f5f5f5;
+            padding: 0 10px;
+            a{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 46px;
+            }
+        }
+        .item_title{
+            display: flex;
+            align-items: center;
+        }
+        .piao_text{
+            margin-left: 5px;
+            font-size: 15px;
+        }
+    }
+}

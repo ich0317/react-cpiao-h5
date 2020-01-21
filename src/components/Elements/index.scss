@@ -1,0 +1,13 @@
+@import "@/style/mixin.scss";
+._button{
+    background-color: $orange;
+    width: 100%;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border-radius: 30px;
+    font-size:18px;
+    -webkit-appearance:none;
+}

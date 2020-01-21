@@ -1,8 +1,10 @@
 import React from 'react'
-import { province } from 'antd-mobile-demo-data';
+import { withRouter } from 'react-router-dom'
 import { StickyContainer, Sticky } from 'react-sticky';
-import { ListView, List, SearchBar } from 'antd-mobile';
+import { ListView, List, SearchBar, Toast } from 'antd-mobile';
 import './index.scss'
+import { getCityList } from '@/api/api';
+import { PageLoading } from '@/components/AllLoading/index.js'
 const { Item } = List;
 
 function genData(ds, provinceData) {
@@ -27,7 +29,6 @@ class City extends React.Component {
     super(props);
     const getSectionData = (dataBlob, sectionID) => dataBlob[sectionID];
     const getRowData = (dataBlob, sectionID, rowID) => dataBlob[rowID];
-
     const dataSource = new ListView.DataSource({
       getRowData,
       getSectionHeaderData: getSectionData,
@@ -35,25 +36,52 @@ class City extends React.Component {
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     });
 
+    let getUerPos = JSON.parse(localStorage.getItem("_piaoUserPos"));
+
     this.state = {
       inputValue: '',
       dataSource,
-      isLoading: true,
+      list:[],
+      activeCity:(getUerPos && getUerPos.posCity) //当前定位城市
     };
   }
 
   componentDidMount() {
-    // simulate initial Ajax
-    setTimeout(() => {
-      this.setState({
-        dataSource: genData(this.state.dataSource, province),
-        isLoading: false,
-      });
-    }, 600);
+      this.getCitys();
+  }
+  // 获取城市数据
+  getCitys(){
+    PageLoading.show();
+    getCityList().then(res=>{
+      let {code, msg, data} = res;
+      if(code === 0){
+        this.setState({
+          dataSource: genData(this.state.dataSource, this.dataFormat(data.list)),
+          list:this.dataFormat(data.list)
+        },()=>{
+          localStorage.setItem('_piaoCity', JSON.stringify(data.list));
+        });
+        PageLoading.hide();
+      }else{
+        Toast.fail(msg, 1.5);
+      }
+    })
+  }
+  /**
+   * 城市列表转成可循环格式
+   * @param { Array } arr 需要转换的数组
+   */
+  dataFormat(arr){
+    let obj = {};
+    arr.map(v => {
+      let [first] = v.spell;
+      !obj[first] ? obj[first] = [v] : obj[first].push(v);
+    })
+    return obj;
   }
 
   onSearch = (val) => {
-    const pd = { ...province };
+    const pd = { ...this.state.list };
     Object.keys(pd).forEach((item) => {
       const arr = pd[item].filter(jj => jj.spell.toLocaleLowerCase().indexOf(val) > -1);
       if (!arr.length) {
@@ -68,6 +96,18 @@ class City extends React.Component {
     });
   }
 
+  //从当前定位位置到首页
+  activeToHome(city){
+    localStorage.setItem("_piaoUserCity", JSON.stringify({ city }));
+    this.props.history.push(`/home/${this.state.activeCity}`, {use:true});
+  }
+
+  //从城市列表到首页
+  listToHome(city){
+    localStorage.setItem("_piaoUserCity", JSON.stringify({ city }));
+    this.props.history.push(`/home/${city}`, {use:true});
+  }
+
   render() {
     return (<div style={{ paddingTop: '40px', position: 'relative', background:'#f5f5f9' }}>
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
@@ -79,6 +119,7 @@ class City extends React.Component {
           onCancel={() => { console.log('onCancel'); }}
         />
       </div>
+      
       <ListView.IndexedList
         dataSource={this.state.dataSource}
         className="am-list sticky-list"
@@ -108,16 +149,17 @@ class City extends React.Component {
             )}
           </Sticky>
         )}
-        renderRow={rowData => (<Item>{rowData}</Item>)}
-        renderHeader={() => <dl className="area"><dt>你所在的地区</dt><dd><span className="now_location">北京</span></dd></dl>}
+        renderRow={(rowData, w, city) => (<Item onClick={this.listToHome.bind(this, city)}>{rowData}</Item>)}
+        renderHeader={() => this.state.activeCity ? (<dl className="area"><dt>你所在的地区</dt><dd onClick={this.activeToHome.bind(this, this.state.activeCity)}><span className="now_location">{this.state.activeCity}</span></dd></dl>) : '定位失败'}
         quickSearchBarStyle={{
           top: 85,
         }}
         delayTime={10}
         delayActivityIndicator={<div style={{ padding: 25, textAlign: 'center' }}>rendering...</div>}
       />
+      
     </div>);
   }
 }
 
-export default City
+export default withRouter(City)

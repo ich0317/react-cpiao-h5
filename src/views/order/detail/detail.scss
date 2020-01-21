@@ -1,35 +1,74 @@
-.item_block{
-    background: #fff;
-    padding: 15px;
-    border-top: 6px solid #f5f5f5;
-    .item_title{
-        border-left: 2px solid #000;
-        padding-left: 8px;
-        font-size: 15px;
-        margin-bottom: 20px;
-        display: flex;
-        line-height: 1;
-        align-items: center;
-        padding-top: 1px;
-    }
-    .order_info{
-        li{
-            margin-bottom: 15px;
+.pay_page {
+    .item_block {
+        background: #fff;
+        padding: 15px;
+        border-top: 6px solid #f5f5f5;
+
+        .item_title {
+            border-left: 2px solid #000;
+            padding-left: 8px;
+            font-size: 15px;
+            margin-bottom: 20px;
             display: flex;
-            span{
-                color: #999;
-                width: 60px;
+            line-height: 1;
+            align-items: center;
+            padding-top: 1px;
+        }
+
+        .order_info {
+            li {
+                margin-bottom: 15px;
+                display: flex;
+
+                span {
+                    color: #999;
+                    width: 80px;
+                }
+
+                em {
+                    font-style: normal;
+                    color: #999;
+                    font-size: 12px;
+                }
             }
-            em{
-                font-style: normal;
-                color: #999;
-                font-size: 12px;
+        }
+
+        .film_notice {
+            li {
+                margin-bottom: 15px;
             }
         }
     }
-    .film_notice{
-        li{
-            margin-bottom: 15px;
+
+    .pay_btns_wrap {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        padding: 15px;
+        background: #fff;
+    }
+
+    .cd_time {
+        padding: 12px 0;
+        text-align: center;
+        color: #666;
+
+        .num {
+            color: #ff6969;
+            margin: 0 2px;
         }
+    }
+
+    .qr {
+        text-align: center;
+        position: relative;
+    }
+
+    .tickets_num,
+    .get_tickets_code {
+        text-align: center;
+        color: #999;
+        margin-top: 8px;
     }
 }

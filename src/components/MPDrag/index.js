@@ -6,7 +6,7 @@ export class MPDrag extends Component {
     componentDidMount(){
         this.oDrag = document.querySelector('.dy_drag');
         this.tx =0;
-        this.ty = 0;
+        this.ty = 45;
         this.scale = 1;
     }
 
@@ -56,7 +56,7 @@ export class MPDrag extends Component {
 
     render(){
         return(
-            <div className="dy_drag" onTouchStart = {this.touchDown.bind(this)} onTouchMove = {this.touchMove.bind(this)} onTouchEnd = {this.touchEnd.bind(this)}>{this.props.children}</div>
+            <div className="dy_drag" style={{transform: 'translate3d(0, 45px, 0px)'}} onTouchStart = {this.touchDown.bind(this)} onTouchMove = {this.touchMove.bind(this)} onTouchEnd = {this.touchEnd.bind(this)}>{this.props.children}</div>
         )
     }
 }

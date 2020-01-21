@@ -4,14 +4,50 @@ export const PageLoading = {
     show(msg){
         const oBody = document.querySelectorAll('body')[0];
         oBody.insertAdjacentHTML('beforeend', `<div class="dy_page_loading">\
-            <div class="dy_loading_center">\
-                <div class="dy_revolve_animation">${gear}</div>\
-                <p>${msg || 'loading'}</p>\
+            <div class="dy_text_wrap">\
+                <dl class="dy_page_text">\
+                    <dt></dt>\
+                    <dd>\
+                        <p></p>\
+                        <p></p>\
+                        <p></p>\
+                    </dd>\
+                </dl>\
+                
+                <dl class="dy_page_text">\
+                    <dt></dt>\
+                    <dd>\
+                        <p></p>\
+                        <p></p>\
+                        <p></p>\
+                    </dd>\
+                </dl>\
+                <dl class="dy_page_text">\
+                    <dd>\
+                        <p></p>\
+                        <p></p>\
+                        <p></p>\
+                    </dd>\
+                </dl>\
+                <dl class="dy_page_text">\
+                    <dt></dt>\
+                    <dd>\
+                        <p></p>\
+                        <p></p>\
+                        <p></p>\
+                    </dd>\
+                </dl>\
+            </div>\
+            <div class="dy_loading_wrap">\
+                <div class="dy_loading_center">\
+                    <div class="dy_revolve_animation">${gear}</div>\
+                    <p>${msg || '快速加载中...'}</p>\
+                </div>\
             </div>\
         </div>`);
     },
     hide(){
-        const oPageLoading= document.querySelectorAll('dy_page_loading')[0];
+        const oPageLoading= document.querySelectorAll('.dy_page_loading')[0];
         oPageLoading.remove();
     }
 }

@@ -1,1 +1,23 @@
-
+.login_wrap{
+    padding: 20px;
+    .input_item{
+        border-bottom: 1px solid #efefef;
+        padding: 10px 0;
+        margin: 0 10px;
+        display: flex;
+        margin-bottom: 10px;
+        input {
+            width: 100%;
+            height: 26px;
+            border: none;
+            font-size: 16px;
+            line-height: 1;
+        }
+        .vcode{
+            width: 80px;
+        }
+    }
+    .input_item_btn{
+        padding-top: 20px;
+    }
+}

@@ -1,3 +1,4 @@
+@import "@/style/mixin.scss";
 #film{
     .fixed_top{
         position: absolute;
@@ -51,7 +52,7 @@
                 content: '';
                 width: 20px;
                 height: 3px;
-                background: #108ee9;
+                background: $light-gray;
                 position: absolute;
                 left: 50%;
                 bottom: 0;

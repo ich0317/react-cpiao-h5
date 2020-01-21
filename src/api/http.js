@@ -1,4 +1,5 @@
 import Axios from "axios";
+import Cookies from 'js-cookie'
 
 const baseUrl = {
   development: "http://localhost:3000",
@@ -17,6 +18,7 @@ const http = Axios.create({
  */
 http.interceptors.request.use(
   function(response) {
+    response.headers['_Piao-Token'] = Cookies.get('_piao_token');
     return response;
   },
   function(err) {
@@ -29,6 +31,11 @@ http.interceptors.request.use(
  */
 http.interceptors.response.use(
   function(response) {
+    if(response.data.code === 20001){
+      //未登录
+    }else if(response.data.code === 20002){
+      //登录过期
+    }
     return response.data;
   },
   function(err) {

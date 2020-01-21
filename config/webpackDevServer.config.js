@@ -83,7 +83,7 @@ module.exports = function(proxy, allowedHost) {
     public: allowedHost,
     proxy:{
       '/api': {   
-        target: 'http://boss.test11.as',
+        target: 'http://localhost:3001',
         changeOrigin: true,
         secure: false,
       },

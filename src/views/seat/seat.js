@@ -1,21 +1,23 @@
 import React, { Component } from "react";
 import { FilmVersionIcon } from "@/components/FilmVersion/index.js";
-import { Button, Toast } from "antd-mobile";
+import { Button, Toast, NavBar } from "antd-mobile";
 import SvgIcon from "@/components/SvgIcon/index.js";
 import { MPDrag } from "@/components/MPDrag/index.js";
-import { a } from "@/assets/aaa.js";
 import "./seat.scss";
+import { getSeatMap, createOrder } from '@/api/api';
+import { PageLoading } from '@/components/AllLoading/index.js'
+import { timestamp2Date } from "@/utils/index";
 
 let SEAT_WIDTH = 30;
 let SEAT_HEIGHT = 30;
 let seatDis = 4;    //座位间距离
 let SCALE = 1;  //初始比例
 let SEAT_STATUS = new Map([
-    [0,'available'],
-    [1,'sold'],
-    [2,'locked'],
-    [3,'forbid'],
-    [4,'selected']
+    [0,'available'],    //可用
+    [1,'sold'],     //已售
+    [2,'locked'],   //锁定
+    [3,'forbid'],   //不可售
+    [4,'selected']  //已选
 ])
 
 class Seat extends Component {
@@ -24,16 +26,38 @@ class Seat extends Component {
         this.state = {
             selectedArr: [],
             moveX:0,
-            moveY:0
+            moveY:0,
+            sessionInfo:{}
         };
     }
 
     componentDidMount() {
-        this.drawMap();
+        let aParams = this.props.match.params;
+        this.screen_id = aParams.screen_id;
+        this.session_id = aParams.session_id;
+        this.getPiaoSeatMap();
+    }
+    
+    //获取座位数据
+    getPiaoSeatMap(){
+        PageLoading.show();
+        getSeatMap({screen_id: this.screen_id,session_id:this.session_id}).then(res=>{
+            let { code, msg, data } = res;
+            if(code === 0){
+                this.drawMap(data.seats);
+                this.seats = data.seats;
+                this.setState({
+                    sessionInfo: data.session
+                })
+            }else{
+                Toast.fail(msg, 1.5);
+            }
+            PageLoading.hide();
+        })
     }
 
     //画座位图
-    drawMap() {
+    drawMap(seats) {
         this.oMap = this.refs.test;
         this.gd = this.oMap.getContext("2d");
         this.available = new Image();
@@ -49,7 +73,7 @@ class Seat extends Component {
         let maxGraphRow = 0;  //最大行数
         let maxGraphCol = 0;  //最大列数
 
-        a.forEach(v => {
+        seats.forEach(v => {
             maxGraphRow =
                 parseInt(v.graph_row) > maxGraphRow ? v.graph_row : maxGraphRow;
             maxGraphCol =
@@ -73,9 +97,10 @@ class Seat extends Component {
   
         //绘制座位图
         this.available.onload = () => {
+            
             this.gd.clearRect(0, 0, this.oMap.width, this.oMap.height);
             
-            a.forEach(v => {
+            seats.forEach(v => {
                 this.gd.drawImage(
                     this[SEAT_STATUS.get(v.seat_status)],
                     (v.graph_col) * this.WCLOUMN,
@@ -83,6 +108,12 @@ class Seat extends Component {
                     SEAT_WIDTH,
                     SEAT_HEIGHT
                 );
+
+                if(v.seat_status === 4){
+                    this.setState({
+                        selectedArr:this.state.selectedArr.concat(v)
+                    })
+                }
 
                 //添加标识号
                 oUl.children[v.graph_row].innerHTML = v.seat_row;
@@ -93,6 +124,7 @@ class Seat extends Component {
             //改变座位图宽高
             this.oMap.width = this.WCLOUMN * maxGraphCol - seatDis;
             this.oMap.height = this.HCLOUMN * maxGraphRow - seatDis;
+
             //插入标识到页面
             let oMark = document.querySelector('.mark');
             oMark.style.height = this.HCLOUMN * maxGraphRow - seatDis +'px';
@@ -111,7 +143,7 @@ class Seat extends Component {
         // let xPos = Math.ceil(dx/(SEAT_WIDTH + 2));   //第二种方法
         // let yPos = Math.ceil(dy/(SEAT_HEIGHT + 2));
 
-        let r = a.find(
+        let r = this.seats.find(
             v =>
                 dy >= (v.graph_row) * this.HCLOUMN &&
                 dy <= (v.graph_row) * this.HCLOUMN + SEAT_HEIGHT &&
@@ -141,6 +173,7 @@ class Seat extends Component {
     }
 
     addSeat(seatInfo){
+    
         this.setState(v => ({
             selectedArr:[...this.state.selectedArr, seatInfo]
         }),()=>{
@@ -189,22 +222,42 @@ class Seat extends Component {
             Toast.info("请选择座位", 1);
             return;
         }
-        console.log(getSeat.map(v=>v._id));
+        PageLoading.show('正在提交订单..')
+
+        createOrder({seats:getSeat.map(v=>v._id), session_id:this.session_id}).then(res=>{
+            let { code, msg, data } = res;
+            if(code === 0){
+                this.props.history.push(`/order/detail/${data.order_id}`);
+            }else{
+                Toast.fail(msg, 1.5);
+                this.getPiaoSeatMap();
+            }
+            PageLoading.hide()
+        })
+    }
+
+    goBack() {
+        require("history").createHashHistory().goBack();
     }
 
     render() {
+        const oSessionInfo = this.state.sessionInfo;
         return (
             <div className="seat">
-                <div className="film_top">
-                    <dl className="film_info">
-                        <dt>
-                            最好的我们&nbsp;
-                            <FilmVersionIcon data={{ vd: "3D" }} />
-                        </dt>
-                        <dd>12月28日 19:00 国语</dd>
-                    </dl>
+                <div className="fix_top">
+                    <NavBar mode="dark" leftContent="返回" onLeftClick={this.goBack}>{oSessionInfo.film_name}</NavBar>
+                    <div className="film_top">
+                    {
+                        oSessionInfo.start_datetime && <dl className="film_info">
+                                <dt>
+                                    {oSessionInfo.film_name}&nbsp;
+                                    <FilmVersionIcon data={{ vd: oSessionInfo.film_version }} />
+                                </dt>
+                                <dd>{timestamp2Date(oSessionInfo.start_datetime, '{M}月{D}日 {h}:{m}')} {oSessionInfo.language}</dd>
+                            </dl>
+                        }
+                    </div>
                 </div>
-
                 <div className="seat_box">
                     <div className="screen_center" style={{fontSize: "12px", transform:'translate3d('+this.state.moveX+'px,0,0)'}}>大屏幕</div>
                     <MPDrag dragMove={this.dragMove.bind(this)} initTop = "30">
@@ -238,7 +291,7 @@ class Seat extends Component {
                             </li>
                         ))}
                     </ul>
-                    <Button type="warning" style={{background: this.state.selectedArr.length === 0 ? '#ccc' : ''}} onClick={this.toBuy.bind(this)}>立即支付</Button>
+                    <Button type="warning" style={{background: this.state.selectedArr.length === 0 ? '#ccc' : ''}} onClick={this.toBuy.bind(this)} >立即支付</Button>
                 </div>
             </div>
         );

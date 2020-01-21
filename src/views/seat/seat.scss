@@ -3,18 +3,22 @@
     height: 100%;
     background: #f9f9fd;
     overflow: hidden;
+    .fix_top{
+        height: 105px;
+        border-bottom: 1px solid rgb(240, 240, 240);
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        z-index: 99;
+    }
     .film_top{
         height: 60px;
         background: #fff;
         padding: 0 15px;
         display: flex;
         align-items: center;
-        border-bottom: 1px solid rgb(240, 240, 240);
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        z-index: 9999;
+        
     }
     .film_info{
         dt{
@@ -38,7 +42,7 @@
         left: 0;
         bottom: 0;
         right: 0;
-        z-index: 9999;
+        z-index: 99;
     }
     .selected_seat{
         display: flex;
@@ -86,7 +90,7 @@
         font-size: 12px;
         text-align: center;
         border-radius: 8px;
-        z-index: 999;
+        z-index: 9;
         ul{
             height: 100%;
             display: flex; 
@@ -108,11 +112,12 @@
         border: 2px solid #ff6969;
         position: absolute;
         left: 10%;
-        top: -40px;
+        top: 5px;
         text-align: center;
         color: #666;
         border-radius: 50% 50% 0 0 / 100% 100% 0 0;
         border-bottom: none;
-        z-index: 99;
+        z-index: 8;
     }
+
 }

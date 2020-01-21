@@ -12,12 +12,12 @@ class TabBarWrap extends Component {
         }
         
     }
+
     render(){
         return (<div className="top_scroll"><TabBar
             unselectedTintColor="#949494"
             tintColor="#ff6969"
             barTintColor="white"
-            
           >
               <TabBar.Item
                   title="电影"
@@ -92,7 +92,7 @@ class TabBarWrap extends Component {
                   }}
                   data-seed="logId"
               >
-                 
+                {this.props.my} 
               </TabBar.Item>
           </TabBar></div>)
     }
