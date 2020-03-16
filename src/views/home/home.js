@@ -1,261 +1,146 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { WingBlank, SearchBar, ListView, Modal, Toast } from "antd-mobile";
-import Film from "@/components/FilmList/index.js";
-import { CinemaList } from "@/components/CinemaList/index.js";
-import TabBarWrap from "@/components/TabBar/index.js";
-import Find from "@/views/find/find";
-import My from "@/views/my/my";
+import { TabBar, Toast } from "antd-mobile";
+import Film from "@/views/film/film.js";
+import My from "@/views/my/my.js";
+import { getPiaoCinemas, getCinemaSessions } from "@/api/api.js"
 import "./home.scss";
-import { getPiaoFilm, getPiaoCinemas } from "@/api/api";
 import { PageLoading } from '@/components/AllLoading/index.js'
-
-const confirmBox = Modal.alert;
-
-let geolocation = new window.QMap.maps.Geolocation(
-    "EZMBZ-A4MEX-MWA4L-T4MZK-66OO5-3OBTD",
-    "film"
-);
+import SvgIcon from "@/components/SvgIcon/index.js";
+import Axios from "axios";  //临时可优化
 
 class Home extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            filmList: [],
-            addressList: [],
-            tabs: [{ title: "影片", sub: 0 }, { title: "影院", sub: 1 }],
-            nowActive: 0, //tab切换 0影片 1影院
-            dataSource0: new ListView.DataSource({
-                rowHasChanged: (r1, r2) => r1 !== r2
-            }), //影片数据
-            dataSource1: new ListView.DataSource({
-                rowHasChanged: (r1, r2) => r1 !== r2
-            }), //影院数据
-            height: (document.documentElement.clientHeight * 3) / 4,
-            nowCity: ""
+            selectedTab: 'film',    //tag名
+            sessionsList: null, //场次
+            cinemasInfo:{}  //影院信息
         };
     }
 
     componentDidMount() {
-        this.getPos = JSON.parse(localStorage.getItem("_piaoUserCity")) || ''; //获取存贮位置
-        let { city } = this.props.match.params; //获取用户点击位置
-        let nowCity = city || this.getPos ? this.getPos.city : '';
-        
-        //如果选择城市，没有则跳转城市页
-        if (nowCity) {
-            this.setState({
-                nowCity
-            },()=>{
-                this.getHomeData();
-            });
-        }
         PageLoading.show();
-        this.locationUser();
-    }
-    //定位
-    locationUser() {
-        let that = this;
-        
-        let isUse = (that.props.location.state && that.props.location.state.use) ? true : this.getPos ? true : false;    //是否提示用户位置以改变 true不提示 false提示
-        
-        geolocation.getLocation(
-            function(res) {
-                
-                if (that.getPos) {
-                    //非第一次定位
-                    if (that.getPos.city !== res.city && !isUse) {
-                        //此用户市级位置改变
-                        that.confirmPos(res);
-                    }
-                } else {
-                    //第一次定位
-                    that.confirmPos(res);
-                }
-            },
-            function(err) {
-                if (!that.getPos) {
-                    //第一次定位失败
-                    Toast.fail("获取位置失败", 1.5);
-                }
-            }
-        );
-    }
-    //定位确认弹窗
-    confirmPos(res) {
-        return confirmBox("当前定位 " + res.city, "是否选择？", [
-            { text: "取消", onPress: () => this.cancelSelect() },
-            { text: "选择", onPress: () => this.selectActivePos(res) }
-        ]);
+        Axios.all([this.getCinemasInfo(), this.getCinemaSessions()]).then(Axios.spread(function (acct, perms) {
+            // 两个请求现在都执行完成
+            PageLoading.hide();
+        }));
     }
 
-    //存储用户定位并跳转
-    selectActivePos({ city, lat, lng }) {
-        localStorage.setItem(
-            "_piaoUserCity",
-            JSON.stringify({ city })
-        );
-        localStorage.setItem(
-            "_piaoUserPos",
-            JSON.stringify({posCity:city, lat, lng })
-        );
-        this.setState({
-            nowCity:city
-        },()=>this.getHomeData())
-        
-    }
-
-    //取消定位
-    cancelSelect(){
-        PageLoading.hide();
-        this.props.history.push("/city", { first: true });
-    }
-    //获取首页数据
-    getHomeData() {
-        getPiaoFilm({city: this.state.nowCity}).then(res => {
-            let { code, msg, data } = res;
-            if (code === 0) {
+    //获取影院信息
+    getCinemasInfo(){
+        getPiaoCinemas().then(res=>{
+            let { code, msg, data} = res;
+            if(code === 0){
                 this.setState({
-                    filmList: data.sessions,
-                    dataSource0: this.state.dataSource0.cloneWithRows(
-                        data.sessions
-                    )
-                });
+                    cinemasInfo:data.cinemas[0]
+                })
             }else{
                 Toast.fail(msg, 1.5);
             }
-            PageLoading.hide();
-        });
+        })
     }
 
-    /**
-     * tab切换
-     * @param { Number } sub
-     */
-    tagChange(sub) {
-        if(sub === 0){
-            PageLoading.show();
-            this.getHomeData();
-        }else if (sub === 1){
-            PageLoading.show();
-            getPiaoCinemas({city: this.state.nowCity}).then(res=>{
-                let { code, msg, data } = res;
-                if (code === 0) {
-                    this.setState({
-                        filmList: data.cinemas,
-                        dataSource1: this.state.dataSource0.cloneWithRows(
-                            data.cinemas
-                        )
-                    });
-                }else{
-                    Toast.fail(msg, 1.5);
-                }
-                PageLoading.hide();
-            })
-        }
-        this.setState(
-            {
-                nowActive: sub
-            },
-            () => {
+    //获取影院场次
+    getCinemaSessions(){
+        getCinemaSessions().then(res=>{
+            let { code, msg, data } = res;
+            if(code === 0){
                 this.setState({
-                    ["dataSource" + sub]: this.state[
-                        "dataSource" + sub
-                    ].cloneWithRows(
-                        sub === 0 ? this.state.filmList : this.state.addressList
-                    )
-                });
+                    sessionsList:data.sessions
+                })
+            }else{
+                Toast.fail(msg, 1.5);
             }
-        );
+        })
     }
-
-    goSelectCinema() {}
-
-    onEndReachedFilm() {}
-    onEndReachedCinema() {}
 
     render() {
+        let oDatas = this.state;
         return (
-            <TabBarWrap
-                content={
-                    <div id="film">
-                        <div className="fixed_top">
-                            <WingBlank>
-                                <div className="city_selected">
-                                    <Link to="/city">
-                                        {this.state.nowCity}
-                                        <i className="arrow_down"></i>
-                                    </Link>
-                                </div>
-                                <div className="search_bar">
-                                    <SearchBar placeholder="搜影片、影院" />
-                                </div>
-                            </WingBlank>
-                            <div className="tabs-bar">
-                                {this.state.tabs.map(v => (
-                                    <span
-                                        className={
-                                            v.sub === this.state.nowActive
-                                                ? "active"
-                                                : ""
-                                        }
-                                        onClick={this.tagChange.bind(
-                                            this,
-                                            v.sub
-                                        )}
-                                        key={v.sub}
-                                    >
-                                        {v.title}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
+            <div style={{ position: 'fixed', height: '100%', width: '100%', top: 0 }} id="film">
+                <TabBar
+                unselectedTintColor="#949494"
+                tintColor="#ff6969"
+                barTintColor="white"
+                tabBarPosition="bottom"
+                hidden={oDatas.hidden}
+                >
+                    <TabBar.Item
+                        title="影片"
+                        key="影片"
+                        icon={<div style={{
+                        width: '22px',
+                        height: '22px',
+                        background: `url(${require("@/assets/film.svg")}) center center /  21px 21px no-repeat` }}
+                        />
+                        }
+                        selectedIcon={<div style={{
+                        width: '22px',
+                        height: '22px',
+                        background: `url(${require("@/assets/film-selected.svg")}) center center /  21px 21px no-repeat` }}
+                        />
+                        }
+                        selected={oDatas.selectedTab === 'film'}
+                        onPress={() => {
+                        this.setState({
+                            selectedTab: 'film',
+                        });
+                        }}
+                        data-seed="logId"
+                    >
+                        <div className="film_top">
 
-                        <div className="pd_top">
-                            <ListView
-                                dataSource={this.state.dataSource0}
-                                renderRow={Film}
-                                pageSize={4}
-                                onScroll={() => {
-                                    console.log("scroll");
-                                }}
-                                style={{
-                                    height: this.state.height,
-                                    overflow: "auto",
-                                    display:
-                                        this.state.nowActive === 0
-                                            ? "block"
-                                            : "none"
-                                }}
-                                scrollRenderAheadDistance={500}
-                                onEndReached={this.onEndReachedFilm}
-                                onEndReachedThreshold={10}
-                            />
-                            <ListView
-                                dataSource={this.state.dataSource1}
-                                renderRow={CinemaList}
-                                pageSize={4}
-                                onScroll={() => {
-                                    console.log("scroll");
-                                }}
-                                style={{
-                                    height: this.state.height,
-                                    overflow: "auto",
-                                    display:
-                                        this.state.nowActive === 1
-                                            ? "block"
-                                            : "none"
-                                }}
-                                scrollRenderAheadDistance={500}
-                                onEndReached={this.onEndReachedCinema}
-                                onEndReachedThreshold={10}
-                            />
+                            <div className="welcome">
+                                <div>
+                                    <div className="welcome_cpiao">
+                                        欢迎来到<b>{oDatas.cinemasInfo.cinema_name}</b>
+                                    </div>
+                                    <div className="address">
+                                    {oDatas.cinemasInfo.address}
+                                    </div>
+                                </div>
+                                <div className="location_icon">
+                                    <SvgIcon iconClass="location" size="22" />
+                                </div>
+                            </div>
+                            <div className="film_title">
+                                正在热映
+                            </div>
+          
                         </div>
-                    </div>
-                }
-                find={<Find />}
-                my={<My />}
-            />
+                        
+                        { oDatas.sessionsList && <Film data= {oDatas.sessionsList}/> }
+
+                    </TabBar.Item>
+                    <TabBar.Item
+                        icon={
+                        <div style={{
+                            width: '22px',
+                            height: '22px',
+                            background: `url(${require("@/assets/my.svg")}) center center /  21px 21px no-repeat` }}
+                        />
+                        }
+                        selectedIcon={
+                        <div style={{
+                            width: '22px',
+                            height: '22px',
+                            background: `url(${require("@/assets/my-selected.svg")}) center center /  21px 21px no-repeat` }}
+                        />
+                        }
+                        title="我的"
+                        key="我的"
+                        selected={oDatas.selectedTab === 'my'}
+                        onPress={() => {
+                        this.setState({
+                            selectedTab: 'my',
+                        });
+                        }}
+                        data-seed="logId1"
+                    >
+                        <My />
+                    </TabBar.Item>
+                </TabBar>
+            </div>
         );
     }
 }

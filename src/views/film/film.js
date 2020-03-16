@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { Tabs, Button, NavBar, Toast } from "antd-mobile";
-import SvgIcon from "@/components/SvgIcon/index.js";
+import { Tabs, Toast } from "antd-mobile";
 import { Swiper as SwiperFilm } from "@/components/Swiper/index.js";
 import "./film.scss";
-import { getCinemaSessions } from "@/api/api";
 import { findInArr, Date2Ts, timestamp2Date } from "@/utils/index";
+import { PButton } from "@/components/Elements/index";
+import SvgIcon from "@/components/SvgIcon/index.js";
 
 class Film extends Component {
   constructor(props) {
@@ -16,10 +16,14 @@ class Film extends Component {
       dateIdx:0,  //当前排期位置（选项卡）
       initPage:null //初始化影片位置
     };
+    
   }
 
   componentDidMount(){
-    this.getCinemaSessions();
+    this.setState({
+        initPage:0,
+        film:this.formatFilmData(this.props.data)
+    })
   }
 
   swiperChangeIndex(idx) {
@@ -28,27 +32,7 @@ class Film extends Component {
       dateIdx:0
     })
   }
-  //获取场次信息
-  getCinemaSessions(){
-    let {cinema_id, film_id} = this.props.match.params;
-    getCinemaSessions({cinema_id}).then(res=>{
-      let { code, msg, data } = res;
-      if(code === 0){
-        let r = this.formatFilmData(data.sessionsInfo.list)
-        r.forEach((v, i)=>{
-          if(v.film_id === film_id){
-            this.setState({
-              initPage:i,
-              film:r,
-              cinemaInfo:data.cinemaInfo
-            })
-          }
-        })
-      }else{
-        Toast.fail(msg, 1.5);
-      }
-    })
-  }
+  
   //数据格式转换
   formatFilmData(list) {
     let arr = [];
@@ -141,6 +125,7 @@ class Film extends Component {
    }
 
   render() {
+    let aFilm = this.state.film;
     const DateTitle = ({ date }) => {
       return (
         <div>
@@ -150,9 +135,9 @@ class Film extends Component {
       );
     };
 
-    let activeData = this.state.film[this.state.filmIdx];
+    let activeData = aFilm[this.state.filmIdx];
     let tabs = [];
-    if(this.state.film.length){
+    if(aFilm.length){
       tabs = activeData.children.map(v=>{
         return {
           title: <DateTitle date={{ day: v._start_dateCn, date:v._start_date }} />
@@ -161,76 +146,71 @@ class Film extends Component {
     }
 
     return (
-      <div className="film_page">
-        <NavBar mode="dark" leftContent="返回" onLeftClick = { this.goBack }>{this.state.cinemaInfo.cinema_name}</NavBar>
-        <div className="film_top">
-          <dl>
-            <dt>{this.state.cinemaInfo.cinema_name}</dt>
-            <dd>{this.state.cinemaInfo.address}</dd>
-          </dl>
-          <div className="place">
-            <SvgIcon iconClass="place" size="46" />
+      <div>
+        { aFilm.length === 0 ? 
+        <div className="nodata"><SvgIcon iconClass="nothing" size="60" /><p className="no_text">暂无电影排片</p></div> :
+        <div className="film_page">
+          <div className="swiper_film">
+          {this.state.initPage !== null ? <SwiperFilm
+              data={aFilm}
+              initPage={this.state.initPage}
+              swiperChangeIndex={this.swiperChangeIndex.bind(this)}
+            /> : ''}
           </div>
-        </div>
-        <div className="swiper_film">
-        {this.state.initPage !== null ? <SwiperFilm
-            data={this.state.film}
-            initPage={this.state.initPage}
-            swiperChangeIndex={this.swiperChangeIndex.bind(this)}
-          /> : ''}
-        </div>
 
-        <div className="film_intro">
-          {activeData ? <h3 className="film_name">{activeData.film_name}</h3> : ''}
-          {activeData ? <p>{activeData.film_long}分钟 | {activeData.film_type} | {activeData.actors}</p> : ''}
-        </div>
-        
-        {this.state.film.length ? <Tabs
-          tabs={tabs}
-          initialPage={0}
-          page={this.state.dateIdx}
-          onChange={(tab, index) => {
-            this.setState({
-              dateIdx:index
-            })
-          }}
-          onTabClick={(tab, index) => {
-            console.log("onTabClick", index, tab);
-          }}
-          tabBarActiveTextColor="#000"
-          tabBarUnderlineStyle={{ borderColor: "#ff6969" }}
-        >
-          {
-          activeData.children.map((v, i)=><div key={i}>
-            <ul className="film_item">
+          <div className="film_intro">
+            {activeData ? <h3 className="film_name">{activeData.film_name}</h3> : ''}
+            {activeData ? <p>{activeData.film_long}分钟 | {activeData.film_type} | {activeData.actors}</p> : ''}
+          </div>
+          
+          {aFilm.length ? <Tabs
+            tabs={tabs}
+            initialPage={0}
+            page={this.state.dateIdx}
+            onChange={(tab, index) => {
+              this.setState({
+                dateIdx:index
+              })
+            }}
+            onTabClick={(tab, index) => {
+              console.log("onTabClick", index, tab);
+            }}
+            tabBarActiveTextColor="#000"
+            tabBarUnderlineStyle={{ borderColor: "#ff6969" }}
+          >
             {
-              
-               activeData.children[this.state.dateIdx].children.map(v => <li key={v.session_id}>
-                <div className="info_part">
-                  <div className="item_top">
-                    <span className="start_time">{v.start_datetime.split(' ')[1]}</span>
-                    <span className="language">{v.language} {v.film_version}</span>
+            activeData.children.map((v, i)=><div key={i}>
+              <ul className="film_item">
+              {
+                
+                activeData.children[this.state.dateIdx].children.map(v => <li key={v.session_id}>
+                  <div className="info_part">
+                    <div className="item_top">
+                      <span className="start_time">{v.start_datetime.split(' ')[1]}</span>
+                      <span className="language">{v.language} {v.film_version}</span>
+                    </div>
+                    <div className="item_bottom">
+                      <span className="end_time">{v.end_datetime.split(' ')[1]}散场</span>
+                      <span className="screen">{v.screen_name}</span>
+                    </div>
                   </div>
-                  <div className="item_bottom">
-                    <span className="end_time">{v.end_datetime.split(' ')[1]}散场</span>
-                    <span className="screen">{v.screen_name}</span>
+                  <div className="film_price">
+                    <div className="sub">
+                      ￥<b>{v.sell_price}</b>&nbsp;起
+                    </div>
                   </div>
-                </div>
-                <div className="film_price">
-                  <div className="sub">
-                    ￥<b>{v.sell_price}</b>&nbsp;起
+                  <div className="buy_btn">
+                    <PButton to={`/seat/${v.session_id}/${v.screen_id}`}>
+                      购票
+                    </PButton>
                   </div>
-                </div>
-                <div className="buy_btn">
-                  <Button type="warning" inline size="small" href={`/seat/${v.session_id}/${v.screen_id}`}>
-                    购票
-                  </Button>
-                </div>
-              </li>)
-            }
-            </ul>
-          </div>)}
-        </Tabs> : ''}
+                </li>)
+              }
+              </ul>
+            </div>)}
+          </Tabs> : ''}
+        </div>
+        }
       </div>
     );
   }

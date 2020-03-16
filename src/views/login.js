@@ -34,6 +34,7 @@ class Login extends Component {
             let { code, data } = res;
             if(code === 0){
                 Cookies.set('_piao_token', data.token)
+                this.props.history.push('/')
             }
         })
     }

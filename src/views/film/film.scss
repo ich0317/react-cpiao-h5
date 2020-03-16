@@ -1,18 +1,5 @@
+@import "@/style/mixin.scss";
 .film_page{
-    .film_top{
-        height: 48px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0  0 0 15px;
-        dt{
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-        dd{
-            color: #666;
-        }
-    }
     .swiper_film{
         height: 128px;
         background: rgba(0,0,0,0.8);
@@ -111,6 +98,10 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            a{
+                height: 32px;
+                font-size: $md-fs;
+            }
         }
     }
 }

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { FilmInfo } from "@/components/FilmInfo/index.js";
 import { Button, Toast, NavBar, Modal } from "antd-mobile";
-import { Date2Ts, singleTo0 } from "@/utils/index.js";
+import { Date2Ts, singleTo0, timestamp2Date } from "@/utils/index.js";
 import "./detail.scss";
 import { getOrderDetail, payOrder, payExpire } from '@/api/api';
 import { ORDER_STATUS } from '@/constants/index';
-import { PageLoading } from '@/components/AllLoading/index.js'
+import { PageLoading } from '@/components/AllLoading/index.js';
+import SvgIcon from "@/components/SvgIcon/index.js";
 
 let timer = null;
 const ORDER_EXPIRE_VALUE = 300; //过期时间秒
@@ -36,6 +37,13 @@ class OrderDetail extends Component {
         getOrderDetail({order_id:this.order_id}).then(res=>{
             let { code, msg, data } = res;
             if(code === 0){
+                //判断是否完场
+                if(data.end_datetime < timestamp2Date(Date.now() / 1000, '{Y}-{M}-{D} {h}:{m}')){
+                    data.isEnd = true;
+                }else{
+                    data.isEnd = false;
+                }
+
                 this.setState({
                     orderInfo:data
                 })
@@ -137,6 +145,7 @@ class OrderDetail extends Component {
                             className="lose"
                             alt=""
                         />
+                        { this.state.orderInfo.isEnd && <div className="film_over"><SvgIcon iconClass="end" size="48" fill="#cccccc" /></div> }
                     </div>
                     <div className="tickets_num">{oInfo.seat_count}张电影票</div>
                     <div className="get_tickets_code">
@@ -180,7 +189,7 @@ class OrderDetail extends Component {
                         { text: '取消' },
                         { text: '提交', onPress: code => this.pay(code) },
                     ],
-                    'secure-text',
+                    'default',
                     )}>去付款</Button>
                 </div>
                 }

@@ -5,7 +5,7 @@ export const piaoLogin = (params) => POST('/api/piaoLogin', params)
 
 //首页获取影片
 export const getPiaoFilm = (params) => GET('/api/getPiaoFilm', params)
-//首页获取影院
+//首页获取影院信息
 export const getPiaoCinemas = (params) => GET('/api/getPiaoCinemas', params)
 //获取城市列表
 export const getCityList = (params) => GET('/api/getPiaoCitys', params)

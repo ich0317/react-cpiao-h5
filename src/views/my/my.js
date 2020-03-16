@@ -6,7 +6,7 @@ import { getLoginInfo } from "@/api/api";
 
 class My extends Component {
     constructor(props){
-        super()
+        super(props)
         this.state = {
             username:null
         }
@@ -22,6 +22,11 @@ class My extends Component {
             }
         })
     }
+
+    toLogin = () =>{
+        window.location.href="/login";
+    }
+
     render(){
         
         return(
@@ -29,7 +34,10 @@ class My extends Component {
                 <div className="my_bg">
                     <dl className="persional">
                         <dt><img src={require('@/assets/default-photo.png')} width="50" height="50" alt=""/></dt>
-                        <dd>{this.state.username}</dd>
+                        {
+                            this.state.username ? <dd>{this.state.username}</dd> :
+                            <dd onClick={this.toLogin}>点击登录</dd>
+                        }
                     </dl>
                 </div>
                 <div className="cloumn">

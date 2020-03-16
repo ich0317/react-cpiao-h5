@@ -26,7 +26,7 @@ class Seat extends Component {
         this.state = {
             selectedArr: [],
             moveX:0,
-            moveY:0,
+            moveY:45,
             sessionInfo:{}
         };
     }
@@ -49,10 +49,10 @@ class Seat extends Component {
                 this.setState({
                     sessionInfo: data.session
                 })
+                PageLoading.hide();
             }else{
                 Toast.fail(msg, 1.5);
-            }
-            PageLoading.hide();
+            }            
         })
     }
 
@@ -88,7 +88,7 @@ class Seat extends Component {
         }
         
         //计算座位图在一屏内显示缩放比例
-        SCALE = (this.deviceWidth - (maxGraphCol) * seatDis) / (maxGraphCol * SEAT_WIDTH);
+        SCALE = (this.deviceWidth - (maxGraphCol * 1 + 1) * seatDis + seatDis) / ((maxGraphCol * 1 + 1) * SEAT_WIDTH);
         
         SEAT_WIDTH = SEAT_WIDTH * SCALE;
         SEAT_HEIGHT = SEAT_HEIGHT * SCALE;
@@ -122,12 +122,12 @@ class Seat extends Component {
             
             let imgData = this.gd.getImageData(0, 0, 2000, 2000); //复制座位图
             //改变座位图宽高
-            this.oMap.width = this.WCLOUMN * maxGraphCol - seatDis;
-            this.oMap.height = this.HCLOUMN * maxGraphRow - seatDis;
-
+            this.oMap.width = this.WCLOUMN * (maxGraphCol * 1 + 1) - seatDis;
+            this.oMap.height = this.HCLOUMN * (maxGraphRow * 1 + 1) - seatDis;
+            
             //插入标识到页面
             let oMark = document.querySelector('.mark');
-            oMark.style.height = this.HCLOUMN * maxGraphRow - seatDis +'px';
+            oMark.style.height = this.HCLOUMN * (maxGraphRow * 1 + 1) - seatDis +'px';
             oMark.appendChild(oUl);
 
             this.gd.putImageData(imgData, 0, 0);    //粘贴座位图

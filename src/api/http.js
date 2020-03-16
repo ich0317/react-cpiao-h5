@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import Axios from "axios";
 import Cookies from 'js-cookie'
 
@@ -18,7 +19,11 @@ const http = Axios.create({
  */
 http.interceptors.request.use(
   function(response) {
-    response.headers['_Piao-Token'] = Cookies.get('_piao_token');
+    //每次发送请求验证token
+    let getLoginToken = Cookies.get('_piao_token');
+    if(getLoginToken){
+      response.headers['_Piao-Token'] = getLoginToken;
+    }
     return response;
   },
   function(err) {
@@ -31,10 +36,11 @@ http.interceptors.request.use(
  */
 http.interceptors.response.use(
   function(response) {
-    if(response.data.code === 20001){
-      //未登录
-    }else if(response.data.code === 20002){
-      //登录过期
+    if(response.data.code === 1 || response.data.code === 2){
+      //未登录或过期
+      setTimeout(()=>{
+        window.location.href = '/login';
+      },1500)
     }
     return response.data;
   },
@@ -45,3 +51,4 @@ http.interceptors.response.use(
 
 export const GET = (url, params) => http.get(url, { params });
 export const POST = (url, params) => http.post(url, params);
+Component.prototype.$http = http;

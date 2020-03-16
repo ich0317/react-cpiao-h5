@@ -1,68 +1,47 @@
 @import "@/style/mixin.scss";
 #film{
-    .fixed_top{
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        padding: 10px 0;
-    }
-    .city_selected{
-        float: left;
-        margin: 13px 24px 0 0;
-        font-size: 14px;
-        position: relative;
-    }
-    .search_bar{
-        margin-bottom: 5px;
-    }
-    .am-search-input{
-        background: #efeff4;
-    }
-    .am-search{
-        border-radius: 20px;
-        height: 36px;
-    }
-    .arrow_down{
-        width: 0;
-        height: 0;
-        border-left: 4px solid transparent;
-        border-right: 4px solid transparent;
-        border-top: 4px solid #333;
-        position: absolute;
-        right: -11px;
-        top: 5px;
-    }
-    .tabs-bar{
-        height: 40px;
-        text-align: center;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    .film_top{
+        height: 54px;
         display: flex;
-        padding: 0 20%;
-        span{
-            display: block;
-            flex: 1;
-            height: 40px;
-            line-height: 40px;
-            font-size: 16px;
-            position: relative;
-        }
-        .active{
-            font-weight: 700;
-            &:after{
-                content: '';
-                width: 20px;
-                height: 3px;
-                background: $light-gray;
-                position: absolute;
-                left: 50%;
-                bottom: 0;
-                transform: translateX(-50%);
-                border-radius: 20%;
-            }
-        }
+        border-bottom: 1px solid $border-color;
+        justify-content: space-between;
+        padding: 0 15px;
+        align-items: center;
     }
-    .pd_top{
-        padding-top: 104px;
-    }
-    
+   .film_title{
+       color: $blue;
+       font-size: $md-fs;
+       display: flex;
+       flex: 1 1 auto;
+       justify-content: flex-end;
+       font-weight: 700;
+   }
+   .welcome{
+       display: flex;
+       justify-content: space-between;
+       width: 270px;
+   }
+   .welcome_cpiao{
+       margin-bottom: 6px;
+       font-size: $md-fs;
+   }
+   .location_icon{
+       display: flex;
+       align-items: center;
+   }
+   .address{
+       color: $normal-color;
+   }
+   .nodata{
+       text-align: center;
+       padding-top: 25%;
+   }
+   .no_text{
+       margin-top: 15px;
+       color: $light-color;
+       font-size: $md-fs;
+   }
 }
