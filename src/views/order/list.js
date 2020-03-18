@@ -54,7 +54,7 @@ class OrderList extends Component {
         return (
             <div className="order_list">
             <NavBar mode="dark" leftContent="返回" onLeftClick={this.goBack}>电影票</NavBar>
-                <ul className="order_wrap clearfix">
+            { this.state.list.length === 0 ? <div className="nodata"><SvgIcon iconClass="nothing" size="60" /><p className="no_text">暂无订单</p></div> : <ul className="order_wrap clearfix">
                 {
                     this.state.list.map(v => <li onClick={this.toDetail.bind(this, v._id)} key = {v._id} className={v.isEnd ? 'end' : ''}>
                         <div className="list_icon"><SvgIcon iconClass="film" size="28" fill= {v.isEnd ? '#ccc' : '#ff6969'} /></div>
@@ -70,6 +70,7 @@ class OrderList extends Component {
                     </li>)
                 }
                 </ul>
+            }
             </div>
         );
     }

@@ -1,3 +1,4 @@
+@import "@/style/mixin.scss";
 //enter是入场前的刹那（点击按钮），appear指页面第一次加载前的一刹那（自动）
 .fade-enter, .fade-appear {
     opacity: 0;
@@ -23,4 +24,13 @@
 
 .fade-exit-done {
     opacity: 0;
+}
+.nodata{
+    text-align: center;
+    padding-top: 25%;
+}
+.no_text{
+    margin-top: 15px;
+    color: $light-color;
+    font-size: $md-fs;
 }
